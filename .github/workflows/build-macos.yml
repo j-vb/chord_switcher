@@ -1,0 +1,54 @@
+name: Build on macOS
+
+# Builds the executable on pull requests and pushes to main that change the
+# app, on macOS, once for Apple Silicon and once for Intel Macs. A tag such as
+# v1.2.0 also attaches the builds to that tag's GitHub release, which the first
+# build to finish creates.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths: ["src/**", "build.py", "requirements.txt", ".python-version", ".github/workflows/build-macos.yml"]
+  pull_request:
+    paths: ["src/**", "build.py", "requirements.txt", ".python-version", ".github/workflows/build-macos.yml"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-latest
+            arch: apple-silicon
+          - runner: macos-15-intel
+            arch: intel
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      # requirements.txt pins flet, so flet[cli] installs the matching CLI
+      - name: Install dependencies
+        run: pip install -r requirements.txt "flet[cli]" pyinstaller
+      - name: Build
+        run: python build.py
+      - name: Pack the build
+        shell: bash
+        run: ditto -c -k --keepParent dist/ChordSwitcher.app chord_switcher-macos-${{ matrix.arch }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chord_switcher-macos-${{ matrix.arch }}.zip
+          path: chord_switcher-macos-${{ matrix.arch }}.zip
+      # Each build workflow tries to create the release, so the later ones skip that step
+      - name: Attach to the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --generate-notes 2>/dev/null || true
+          gh release upload "$GITHUB_REF_NAME" chord_switcher-macos-${{ matrix.arch }}.zip --clobber

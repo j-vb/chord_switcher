@@ -1,0 +1,45 @@
+name: Build on Linux
+
+# Builds the executable on pull requests and pushes to main that change the
+# app, on Linux. A tag such as v1.2.0 also attaches the build
+# to that tag's GitHub release, which the first build to finish creates.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths: ["src/**", "build.py", "requirements.txt", ".python-version", ".github/workflows/build-ubuntu.yml"]
+  pull_request:
+    paths: ["src/**", "build.py", "requirements.txt", ".python-version", ".github/workflows/build-ubuntu.yml"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      # requirements.txt pins flet, so flet[cli] installs the matching CLI
+      - name: Install dependencies
+        run: pip install -r requirements.txt "flet[cli]" pyinstaller
+      - name: Build
+        run: python build.py
+      - name: Pack the build
+        shell: bash
+        run: tar -czf chord_switcher-linux.tar.gz -C dist ChordSwitcher
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chord_switcher-linux.tar.gz
+          path: chord_switcher-linux.tar.gz
+      # Each build workflow tries to create the release, so the later ones skip that step
+      - name: Attach to the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --generate-notes 2>/dev/null || true
+          gh release upload "$GITHUB_REF_NAME" chord_switcher-linux.tar.gz --clobber

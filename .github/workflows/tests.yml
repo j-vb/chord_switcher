@@ -1,0 +1,28 @@
+name: Tests
+
+# The tests check the chord logic in the chart drawers, which is plain Python
+# and gives the same results on every system, so one system is enough.
+# The build workflows check the app on Windows, macOS and Linux.
+# Runs on pull requests and on pushes to main, so a pull request branch
+# isn't tested twice.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      # The chart drawers look for fonts by name, and Ubuntu has none of them by default
+      - name: Install fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-dejavu-core
+      # The tests cover the chart drawers, which only need Pillow
+      - name: Install dependencies
+        run: pip install "pillow>=10" "pytest>=8"
+      - name: Run tests
+        run: pytest -q

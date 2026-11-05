@@ -1,0 +1,24 @@
+name: Bug
+description: The app crashes or does something it shouldn't
+labels: ["bug"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead. A screenshot helps.
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: System
+      placeholder: Windows 11, or macOS 15 on Apple Silicon
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release you downloaded, or "from source"
+      placeholder: v1.0.0

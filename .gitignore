@@ -1,0 +1,12 @@
+# PyInstaller output, recreated by build.py
+build/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Written by flet pack
+*.spec

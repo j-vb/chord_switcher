@@ -1,0 +1,31 @@
+name: Wrong or missing chord shape
+description: A chart shows a shape that is wrong, unplayable or missing
+labels: ["chord shape"]
+body:
+  - type: input
+    id: instrument
+    attributes:
+      label: Instrument and tuning
+      placeholder: Banjo, open G
+    validations:
+      required: true
+  - type: input
+    id: chord
+    attributes:
+      label: Chord
+      placeholder: F#m
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong
+      description: The frets of the shape, from the string on the left of the chart, and what it should be. A screenshot helps.
+      placeholder: "The card at fret 5 shows 5-6-5-7, but the usual shape is 4-6-5-7."
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: A chord chart or lesson that shows the right shape, if you have one
