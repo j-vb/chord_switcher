@@ -14,13 +14,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
-      # The chart drawers look for fonts by name, and Ubuntu has none of them by default
-      - name: Install fonts
-        run: sudo apt-get update && sudo apt-get install -y fonts-dejavu-core
       # The tests cover the chart drawers, which only need Pillow
       - name: Install dependencies
         run: pip install "pillow>=10" "pytest>=8"

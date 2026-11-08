@@ -32,7 +32,7 @@ Unzip it and start `ChordSwitcher`. The app isn't signed, so your system warns y
 
 - **Windows**: SmartScreen says "Windows protected your PC". Click **More info**, then **Run anyway**.
 - **macOS**: the Mac says it can't check the app for malicious software. Close the message, go to **System Settings → Privacy & Security**, and click **Open Anyway** next to ChordSwitcher.
-- **Linux**: if it doesn't start, make it executable first with `chmod +x ChordSwitcher`.
+- **Linux**: if it doesn't start, make it executable first with `chmod +x ChordSwitcher`. The app needs GTK 3, EGL and libsecret, which desktops such as Ubuntu, Fedora and Mint already have. On a minimal system, an error like `libgtk-3.so.0: cannot open shared object file` means they're missing: install `libgtk-3-0`, `libegl1` and `libsecret-1-0` (Debian and Ubuntu names).
 
 ## Features
 

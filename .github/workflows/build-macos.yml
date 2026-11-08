@@ -27,8 +27,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
       # requirements.txt pins flet, so flet[cli] installs the matching CLI
@@ -39,7 +39,7 @@ jobs:
       - name: Pack the build
         shell: bash
         run: ditto -c -k --keepParent dist/ChordSwitcher.app chord_switcher-macos-${{ matrix.arch }}.zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: chord_switcher-macos-${{ matrix.arch }}.zip
           path: chord_switcher-macos-${{ matrix.arch }}.zip

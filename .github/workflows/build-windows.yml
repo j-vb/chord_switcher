@@ -18,8 +18,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
       # requirements.txt pins flet, so flet[cli] installs the matching CLI
@@ -30,7 +30,7 @@ jobs:
       - name: Pack the build
         shell: bash
         run: 7z a chord_switcher-windows.zip ./dist/ChordSwitcher.exe
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: chord_switcher-windows.zip
           path: chord_switcher-windows.zip
